@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import './index.css';
 
-// ============================================================================
-// FUNCIÓN AUXILIAR: Calcular Ganador
-// ============================================================================
 function calculateWinner(squares: (string | null)[]) {
   const lines = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -19,15 +16,7 @@ function calculateWinner(squares: (string | null)[]) {
   return null;
 }
 
-// ============================================================================
-// COMPONENTE: Square
-// ============================================================================
-interface SquareProps {
-  value: string | null;
-  onSquareClick: () => void;
-}
-
-function Square({ value, onSquareClick }: SquareProps) {
+function Square({ value, onSquareClick }: { value: string | null, onSquareClick: () => void }) {
   return (
     <button className="square" onClick={onSquareClick}>
       {value}
@@ -35,89 +24,65 @@ function Square({ value, onSquareClick }: SquareProps) {
   );
 }
 
-// ============================================================================
-// COMPONENTE: Board (Ahora solo recibe datos, ya no tiene useState)
-// ============================================================================
-interface BoardProps {
-  xIsNext: boolean;
-  squares: (string | null)[];
-  onPlay: (nextSquares: (string | null)[]) => void;
-}
-
-function Board({ xIsNext, squares, onPlay }: BoardProps) {
+function Board({ xIsNext, squares, onPlay }: { xIsNext: boolean, squares: (string | null)[], onPlay: (nextSquares: (string | null)[], index: number) => void }) {
   function handleClick(i: number) {
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-
+    if (calculateWinner(squares) || squares[i]) return;
     const nextSquares = squares.slice();
-    if (xIsNext) {
-      nextSquares[i] = 'X';
-    } else {
-      nextSquares[i] = 'O';
-    }
-    
-    // En lugar de actualizar el estado aquí, le avisamos a 'Game' que hubo una jugada
-    onPlay(nextSquares);
+    nextSquares[i] = xIsNext ? 'X' : 'O';
+    onPlay(nextSquares, i); // Pasamos el índice para calcular la ubicación
   }
 
   const winner = calculateWinner(squares);
-  let status;
-  if (winner) {
-    status = 'Ganador: ' + winner;
-  } else {
-    status = 'Siguiente jugador: ' + (xIsNext ? 'X' : 'O');
-  }
+  const status = winner ? 'Ganador: ' + winner : 'Siguiente jugador: ' + (xIsNext ? 'X' : 'O');
 
   return (
     <>
       <div className="status">{status}</div>
-      <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
-      </div>
+      {[0, 3, 6].map((row) => (
+        <div key={row} className="board-row">
+          {[0, 1, 2].map((col) => (
+            <Square key={row + col} value={squares[row + col]} onSquareClick={() => handleClick(row + col)} />
+          ))}
+        </div>
+      ))}
     </>
   );
 }
 
-// ============================================================================
-// COMPONENTE PRINCIPAL: Game (El nuevo cerebro de la aplicación)
-// ============================================================================
 export default function Game() {
-  const [history, setHistory] = useState<(string | null)[][]>([Array(9).fill(null)]);
+  const [history, setHistory] = useState([
+    { squares: Array(9).fill(null), location: null as number | null }
+  ]);
   const [currentMove, setCurrentMove] = useState(0);
   
-  // LIMPIEZA: xIsNext ahora es una constante calculada
   const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove];
+  const currentSquares = history[currentMove].squares;
 
-  function handlePlay(nextSquares: (string | null)[]) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+  function handlePlay(nextSquares: (string | null)[], index: number) {
+    const nextHistory = [...history.slice(0, currentMove + 1), { squares: nextSquares, location: index }];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
   }
 
-  function jumpTo(nextMove: number) {
-    setCurrentMove(nextMove);
-  }
+  const moves = history.map((step, move) => {
+    let description;
+    if (move > 0) {
+      // Extra 1: Calcular fila y columna
+      const row = Math.floor(step.location! / 3) + 1;
+      const col = (step.location! % 3) + 1;
+      description = `Ir al movimiento #${move} (Fila ${row}, Col ${col})`;
+    } else {
+      description = 'Ir al inicio del juego';
+    }
 
-  // PASO: Picking a Key
-  const moves = history.map((_squares, move) => {
-    let description = move > 0 ? 'Ir al movimiento #' + move : 'Ir al inicio del juego';
     return (
-      <li key={move}> {/* Aquí está la KEY que pide el tutorial */}
-        <button onClick={() => jumpTo(move)}>{description}</button>
+      <li key={move}>
+        {/* Extra 2: Resaltar el movimiento actual con negrita */}
+        {move === currentMove ? (
+          <b>Usted está en el movimiento #{move}</b>
+        ) : (
+          <button onClick={() => setCurrentMove(move)}>{description}</button>
+        )}
       </li>
     );
   });

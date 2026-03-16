@@ -76,3 +76,40 @@ kbd {
 .game-info {
   margin-left: 20px;
 }
+/* Resaltado para los cuadros ganadores */
+.highlight {
+  background-color: #ffff00 !important;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Estilo para el texto del movimiento actual */
+.current-move {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-left: 5px;
+}
+
+/* Botón de ordenación */
+.sort-btn {
+  margin-bottom: 10px;
+  cursor: pointer;
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.sort-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Espaciado para la lista */
+ol {
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 8px;
+}
