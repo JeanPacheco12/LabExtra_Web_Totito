@@ -1,73 +1,18 @@
-# React + TypeScript + Vite
+# Lab Extra - Totito (Tic-Tac-Toe) Pro con React + TypeScript
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción del Laboratorio
+Este laboratorio extra es una implementación avanzada del juego de Totito (Tic-Tac-Toe) con un tutorial que nos vino en la página oficial de React. Partiendo de la base del tutorial, se expandió la funcionalidad para incluir retos de lógica y UI, utilizando **Vite** como bundler y **TypeScript** para un desarrollo seguro y libre de errores de tipado y para mejorar la UX del usuario con las diferentes implementaciones que se realizaron.
 
-Currently, two official plugins are available:
+## Funcionalidades y Desafíos Extra Implementados
+Más allá del tutorial básico que nos ofrecía React, este proyecto incluye:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1.  **Renderización Dinámica (Loops):** El tablero se genera mediante bucles anidados, eliminando el código repetitivo y mejorando la escalabilidad.
+2.  **Ubicación de Movimientos:** El historial muestra coordenadas precisas `(fila, columna)` para cada jugada realizada.
+3.  **Viaje en el Tiempo (Time Travel):** Gestión de estado inmutable mediante *Lifting State Up* en el componente `Game`.
+4.  **Resaltado del Movimiento Actual:** La interfaz identifica visualmente el paso actual en el historial, desactivando el botón para evitar redundancia.
+5.  **Ordenamiento Inteligente:** Funcionalidad para alternar el orden de la lista de movimientos (Ascendente/Descendente).
+6.  **Detección de Empate y Resaltado de Victoria:** Cuando hay un ganador, se resaltan los cuadros de la combinación ganadora. Si se agotan los movimientos, se notifica un empate.
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+**Video de demostración:** 
+[Inserta tu link de YouTube/Drive aquí]
