@@ -36,14 +36,16 @@ function Square({ value, onSquareClick }: SquareProps) {
 }
 
 // ============================================================================
-// COMPONENTE: Board
+// COMPONENTE: Board (Ahora solo recibe datos, ya no tiene useState)
 // ============================================================================
-export default function Board() {
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState<(string | null)[]>(Array(9).fill(null));
+interface BoardProps {
+  xIsNext: boolean;
+  squares: (string | null)[];
+  onPlay: (nextSquares: (string | null)[]) => void;
+}
 
+function Board({ xIsNext, squares, onPlay }: BoardProps) {
   function handleClick(i: number) {
-    // AHORA: Si alguien ya ganó O el cuadro está ocupado, no hacemos nada
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
@@ -55,11 +57,10 @@ export default function Board() {
       nextSquares[i] = 'O';
     }
     
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+    // En lugar de actualizar el estado aquí, le avisamos a 'Game' que hubo una jugada
+    onPlay(nextSquares);
   }
 
-  // Lógica para mostrar el estado del juego (Ganador o Siguiente jugador)
   const winner = calculateWinner(squares);
   let status;
   if (winner) {
@@ -87,5 +88,35 @@ export default function Board() {
         <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
       </div>
     </>
+  );
+}
+
+// ============================================================================
+// COMPONENTE PRINCIPAL: Game (El nuevo cerebro de la aplicación)
+// ============================================================================
+export default function Game() {
+  const [xIsNext, setXIsNext] = useState(true);
+  // history es un arreglo de arreglos (guarda la "foto" del tablero en cada turno)
+  const [history, setHistory] = useState<(string | null)[][]>([Array(9).fill(null)]);
+  
+  // Siempre agarramos el último tablero guardado en el historial para mostrarlo
+  const currentSquares = history[history.length - 1];
+
+  function handlePlay(nextSquares: (string | null)[]) {
+    // Cuando alguien juega, agregamos el nuevo tablero al final del historial
+    setHistory([...history, nextSquares]);
+    setXIsNext(!xIsNext);
+  }
+
+  return (
+    <div className="game">
+      <div className="game-board">
+        {/* Le pasamos las props necesarias al Board */}
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <ol>{/* Aquí irán los botones del viaje en el tiempo */}</ol>
+      </div>
+    </div>
   );
 }
