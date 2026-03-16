@@ -95,22 +95,21 @@ function Board({ xIsNext, squares, onPlay }: BoardProps) {
 // COMPONENTE PRINCIPAL: Game (El nuevo cerebro de la aplicación)
 // ============================================================================
 export default function Game() {
-  const [xIsNext, setXIsNext] = useState(true);
   const [history, setHistory] = useState<(string | null)[][]>([Array(9).fill(null)]);
-  const [currentMove, setCurrentMove] = useState(0); // Nuevo estado
-
-  const currentSquares = history[currentMove]; // Ahora leemos de la posición actual
+  const [currentMove, setCurrentMove] = useState(0);
+  
+  // LIMPIEZA: xIsNext ahora es una constante calculada
+  const xIsNext = currentMove % 2 === 0;
+  const currentSquares = history[currentMove];
 
   function handlePlay(nextSquares: (string | null)[]) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
-    setXIsNext(!xIsNext);
   }
 
   function jumpTo(nextMove: number) {
     setCurrentMove(nextMove);
-    setXIsNext(nextMove % 2 === 0); // Actualizamos el turno manualmente por ahora
   }
 
   // PASO: Picking a Key
