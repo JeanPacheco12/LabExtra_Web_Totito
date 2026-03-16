@@ -97,16 +97,20 @@ function Board({ xIsNext, squares, onPlay }: BoardProps) {
 export default function Game() {
   const [xIsNext, setXIsNext] = useState(true);
   const [history, setHistory] = useState<(string | null)[][]>([Array(9).fill(null)]);
-  const currentSquares = history[history.length - 1];
+  const [currentMove, setCurrentMove] = useState(0); // Nuevo estado
+
+  const currentSquares = history[currentMove]; // Ahora leemos de la posición actual
 
   function handlePlay(nextSquares: (string | null)[]) {
-    setHistory([...history, nextSquares]);
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
     setXIsNext(!xIsNext);
   }
 
   function jumpTo(nextMove: number) {
-    // Por ahora esta función estará vacía
-    console.log("Saltando al movimiento: ", nextMove);
+    setCurrentMove(nextMove);
+    setXIsNext(nextMove % 2 === 0); // Actualizamos el turno manualmente por ahora
   }
 
   // PASO: Picking a Key
