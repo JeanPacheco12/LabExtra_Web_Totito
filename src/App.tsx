@@ -2,6 +2,24 @@ import { useState } from 'react';
 import './index.css';
 
 // ============================================================================
+// FUNCIÓN AUXILIAR: Calcular Ganador
+// ============================================================================
+function calculateWinner(squares: (string | null)[]) {
+  const lines = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
+}
+
+// ============================================================================
 // COMPONENTE: Square
 // ============================================================================
 interface SquareProps {
@@ -21,19 +39,16 @@ function Square({ value, onSquareClick }: SquareProps) {
 // COMPONENTE: Board
 // ============================================================================
 export default function Board() {
-  // Nuevo estado para saber de quién es el turno
   const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState<(string | null)[]>(Array(9).fill(null));
 
   function handleClick(i: number) {
-    // Si el cuadro ya está ocupado, cortamos la función y no hacemos nada
-    if (squares[i]) {
+    // AHORA: Si alguien ya ganó O el cuadro está ocupado, no hacemos nada
+    if (calculateWinner(squares) || squares[i]) {
       return;
     }
 
     const nextSquares = squares.slice();
-    
-    // Asignamos X o O dependiendo del turno
     if (xIsNext) {
       nextSquares[i] = 'X';
     } else {
@@ -41,11 +56,21 @@ export default function Board() {
     }
     
     setSquares(nextSquares);
-    setXIsNext(!xIsNext); // Invertimos el turno
+    setXIsNext(!xIsNext);
+  }
+
+  // Lógica para mostrar el estado del juego (Ganador o Siguiente jugador)
+  const winner = calculateWinner(squares);
+  let status;
+  if (winner) {
+    status = 'Ganador: ' + winner;
+  } else {
+    status = 'Siguiente jugador: ' + (xIsNext ? 'X' : 'O');
   }
 
   return (
     <>
+      <div className="status">{status}</div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
