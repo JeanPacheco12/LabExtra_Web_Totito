@@ -96,26 +96,36 @@ function Board({ xIsNext, squares, onPlay }: BoardProps) {
 // ============================================================================
 export default function Game() {
   const [xIsNext, setXIsNext] = useState(true);
-  // history es un arreglo de arreglos (guarda la "foto" del tablero en cada turno)
   const [history, setHistory] = useState<(string | null)[][]>([Array(9).fill(null)]);
-  
-  // Siempre agarramos el último tablero guardado en el historial para mostrarlo
   const currentSquares = history[history.length - 1];
 
   function handlePlay(nextSquares: (string | null)[]) {
-    // Cuando alguien juega, agregamos el nuevo tablero al final del historial
     setHistory([...history, nextSquares]);
     setXIsNext(!xIsNext);
   }
 
+  function jumpTo(nextMove: number) {
+    // Por ahora esta función estará vacía
+    console.log("Saltando al movimiento: ", nextMove);
+  }
+
+  // PASO: Picking a Key
+  const moves = history.map((_squares, move) => {
+    let description = move > 0 ? 'Ir al movimiento #' + move : 'Ir al inicio del juego';
+    return (
+      <li key={move}> {/* Aquí está la KEY que pide el tutorial */}
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
+
   return (
     <div className="game">
       <div className="game-board">
-        {/* Le pasamos las props necesarias al Board */}
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{/* Aquí irán los botones del viaje en el tiempo */}</ol>
+        <ol>{moves}</ol>
       </div>
     </div>
   );
