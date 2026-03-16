@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './index.css';
 
 // ============================================================================
-// COMPONENTE: Square (Ahora es "tonto", recibe todo por props del Board)
+// COMPONENTE: Square
 // ============================================================================
 interface SquareProps {
   value: string | null;
@@ -18,25 +18,35 @@ function Square({ value, onSquareClick }: SquareProps) {
 }
 
 // ============================================================================
-// COMPONENTE: Board (Ahora maneja el estado de los 9 cuadros)
+// COMPONENTE: Board
 // ============================================================================
 export default function Board() {
-  // Elevamos el estado: el tablero ahora guarda un arreglo con los 9 valores (inician en null)
+  // Nuevo estado para saber de quién es el turno
+  const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState<(string | null)[]>(Array(9).fill(null));
 
   function handleClick(i: number) {
-    // Creamos una copia del arreglo por inmutabilidad (muy importante en React)
+    // Si el cuadro ya está ocupado, cortamos la función y no hacemos nada
+    if (squares[i]) {
+      return;
+    }
+
     const nextSquares = squares.slice();
-    // Asignamos la X en la posición del cuadro que se clickeó
-    nextSquares[i] = 'X';
-    // Actualizamos el estado del tablero
+    
+    // Asignamos X o O dependiendo del turno
+    if (xIsNext) {
+      nextSquares[i] = 'X';
+    } else {
+      nextSquares[i] = 'O';
+    }
+    
     setSquares(nextSquares);
+    setXIsNext(!xIsNext); // Invertimos el turno
   }
 
   return (
     <>
       <div className="board-row">
-        {/* Pasamos el valor actual y una función de flecha para saber qué índice actualizar */}
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
         <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
